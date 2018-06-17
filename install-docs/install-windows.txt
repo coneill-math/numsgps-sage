@@ -1,0 +1,20 @@
+Follow the instructions here for installing Sage.  
+
+http://wiki.sagemath.org/SageApplianceInstallation
+
+The factorization package also needs to be installed inside a particular component of Sage, called GAP.  Here is the package that must be installed: 
+
+https://bitbucket.org/gap-system/numericalsgps/downloads
+
+For this, click Download Repository, unzip the downloaded file, rename the resulting folder to "numericalsgps", and then follow these instructions for installing it: 
+
+http://wiki.sagemath.org/InstallingGapPackages
+
+You will also need the NumericalSemigroup file, available at the following webpage: 
+
+https://github.com/coneill-math/numsgps-sage
+
+This file should be installed in a similar manner to the GAP package (that is, using shared folders) but it can be put in the virtual machine's Desktop folder (rather than inside of GAP itself).  Some sample code to get started is also available there.  
+
+This feels like a long process, but thankfully it only has to be done the first time.  Feel free to shoot me an email if you run into any issues getting it running.  
+
