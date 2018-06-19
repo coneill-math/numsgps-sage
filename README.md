@@ -16,7 +16,7 @@ numsgps-sage is released under the terms of the [MIT license](https://tldrlegal.
 To set up your machine to use numsgpssage, do the following.  
 
 * First, install Sage on your machine.  Instructions for doing so can be found [here](http://sagemath.org/).
-* Next, install the GAP package numericalsgps into your Sage installation.  Instructions for installing GAP packages in Sage can be found [here](http://wiki.sagemath.org/InstallingGapPackages), and the URL for the numericalsgps package can be found [here](https://bitbucket.org/gap-system/numericalsgps).
+* Next, install the GAP package numericalsgps into your Sage installation.  Instructions for installing GAP packages in Sage can be found [here](http://wiki.sagemath.org/InstallingGapPackages), and the numericalsgps package can be found [here](https://www.gap-system.org/Packages/numericalsgps.html).
 * Finally, download `NumericalSemigroup.sage` and place it in your favorite folder.
 
 The following code fragment gives an overview of how to use the `NumericalSemigroup` class from within Sage, and more complete documentation will be added in the near future.
