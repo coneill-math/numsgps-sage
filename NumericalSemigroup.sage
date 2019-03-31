@@ -329,6 +329,7 @@ class NumericalSemigroup:
 		self.__gluings = [None]
 		self.__gaps = [None]
 		self.__frob = [None]
+		self.__type = [None]
 		self.__bettielements = [None]
 		self.__psuedofrobs = [None]
 		self.__minimalpresentation = [None]
@@ -419,7 +420,7 @@ class NumericalSemigroup:
 		return n in store_loc
 	
 	def IsIrreducible(self, should_use_store_loc = True):
-		return True if self.__GenericGapCallGlobal(should_use_store_loc, self.__isirreducible, 'IsACompleteIntersectionNumericalSemigroup') is True else False
+		return True if self.__GenericGapCallGlobal(should_use_store_loc, self.__isirreducible, 'IsIrreducibleNumericalSemigroup') is True else False
 	
 	def IsCompleteIntersection(self, should_use_store_loc = True):
 		return True if self.__GenericGapCallGlobal(should_use_store_loc, self.__iscompleteintersection, 'IsACompleteIntersectionNumericalSemigroup') is True else False
@@ -444,6 +445,10 @@ class NumericalSemigroup:
 	
 	def FrobeniusNumber(self, should_use_store_loc = True):
 		return self.__GenericGapCallGlobal(should_use_store_loc, self.__frob, 'FrobeniusNumberOfNumericalSemigroup')
+		# return [[int(j) for j in l] for l in gap('FactorizationsElementWRTNumericalSemigroup(%d,%s)'%(n,self.semigroup.name()))]
+	
+	def Type(self, should_use_store_loc = True):
+		return self.__GenericGapCallGlobal(should_use_store_loc, self.__type, 'TypeOfNumericalSemigroup')
 		# return [[int(j) for j in l] for l in gap('FactorizationsElementWRTNumericalSemigroup(%d,%s)'%(n,self.semigroup.name()))]
 	
 	def PseudoFrobeniusNumbers(self, should_use_store_loc = True):
@@ -901,6 +906,18 @@ class NumericalSemigroup:
 		#	semi.__InitWithGapSemigroup(s)
 		#	ret.append(semi)
 		#return ret
+	
+	@staticmethod
+	def SemigroupsWithGenus(g):
+		return [NumericalSemigroup().__InitWithGapSemigroup(s) for s in gap('NumericalSemigroupsWithGenus(' + str(g) + ')')]
+	
+	@staticmethod
+	def IrreducibleSemigroupsWithFrobeniusNumber(f):
+		return [NumericalSemigroup().__InitWithGapSemigroup(s) for s in gap('IrreducibleNumericalSemigroupsWithFrobeniusNumber(' + str(f) + ')')]
+	
+	@staticmethod
+	def SemigroupsWithPseudoFrobeniusNumbers(pf):
+		return [NumericalSemigroup().__InitWithGapSemigroup(s) for s in gap('NumericalSemigroupsWithPseudoFrobeniusNumbers(' + str(pf) + ')')]
 	
 	@staticmethod
 	def SemigroupsWithGeneratorBounds(emb,nmax):
