@@ -912,16 +912,24 @@ class NumericalSemigroup:
 		#return ret
 	
 	@staticmethod
+	def SemigroupsWithPseudoFrobeniusNumbers(pf):
+		return [NumericalSemigroup().__InitWithGapSemigroup(s) for s in gap('NumericalSemigroupsWithPseudoFrobeniusNumbers(' + str(pf) + ')')]
+	
+	@staticmethod
 	def SemigroupsWithGenus(g):
 		return [NumericalSemigroup().__InitWithGapSemigroup(s) for s in gap('NumericalSemigroupsWithGenus(' + str(g) + ')')]
 	
 	@staticmethod
-	def IrreducibleSemigroupsWithFrobeniusNumber(f):
-		return [NumericalSemigroup().__InitWithGapSemigroup(s) for s in gap('IrreducibleNumericalSemigroupsWithFrobeniusNumber(' + str(f) + ')')]
+	def ArfSemigroupsWithFrobeniusNumber(f):
+		return [NumericalSemigroup().__InitWithGapSemigroup(s) for s in gap('ArfNumericalSemigroupsWithFrobeniusNumber(' + str(f) + ')')]
 	
 	@staticmethod
-	def SemigroupsWithPseudoFrobeniusNumbers(pf):
-		return [NumericalSemigroup().__InitWithGapSemigroup(s) for s in gap('NumericalSemigroupsWithPseudoFrobeniusNumbers(' + str(pf) + ')')]
+	def ArfSemigroupsWithGenus(g):
+		return [NumericalSemigroup().__InitWithGapSemigroup(s) for s in gap('ArfNumericalSemigroupsWithGenus(' + str(g) + ')')]
+	
+	@staticmethod
+	def IrreducibleSemigroupsWithFrobeniusNumber(f):
+		return [NumericalSemigroup().__InitWithGapSemigroup(s) for s in gap('IrreducibleNumericalSemigroupsWithFrobeniusNumber(' + str(f) + ')')]
 	
 	@staticmethod
 	def SemigroupsWithGeneratorBounds(emb,nmax):
