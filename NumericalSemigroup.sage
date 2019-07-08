@@ -326,6 +326,7 @@ class NumericalSemigroup:
 		#self.AperySet(self.gens[0])
 		self.__isirreducible = [None]
 		self.__iscompleteintersection = [None]
+		self.__isarf = [None]
 		self.__gluings = [None]
 		self.__gaps = [None]
 		self.__frob = [None]
@@ -424,6 +425,9 @@ class NumericalSemigroup:
 	
 	def IsCompleteIntersection(self, should_use_store_loc = True):
 		return True if self.__GenericGapCallGlobal(should_use_store_loc, self.__iscompleteintersection, 'IsACompleteIntersectionNumericalSemigroup') is True else False
+	
+	def IsArf(self, should_use_store_loc = True):
+		return True if self.__GenericGapCallGlobal(should_use_store_loc, self.__isarf, 'IsArfNumericalSemigroup') is True else False
 	
 	def Gluings(self, should_use_store_loc = True):
 		return self.__GenericGapCallGlobal(should_use_store_loc, self.__gluings, 'AsGluingOfNumericalSemigroups')
@@ -936,6 +940,10 @@ class NumericalSemigroup:
 		params = [str(maxemb), str(genmax)]
 		return NumericalSemigroup().__InitWithGapSemigroup(gap('RandomNumericalSemigroup(%s)'%(','.join(params))))
 	
+	def RandomSemigroupWithGenus(genus):
+		params = [str(genus)]
+		return NumericalSemigroup().__InitWithGapSemigroup(gap('RandomNumericalSemigroupWithGenus(%s)'%(','.join(params))))
+
 	def __eq__(self, other):
 		return self.gens == other.gens
 	
