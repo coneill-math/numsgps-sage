@@ -383,6 +383,10 @@ class NumericalSemigroup:
 	def Contains(self, n):
 		return int(n) >= self.AperySet(self.gens[0])[int(n) % self.gens[0]]
 	
+	def IsSubsemigroupOf(self, S):
+		m = min(self.gens)
+		return m in S and all([a1 >= a2 for (a1, a2) in zip(self.AperySet(m), S.AperySet(m))])
+	
 	def IsSymmetric(self):
 		return self.FrobeniusNumber() % 2 == 1 and len([i for i in [1..self.FrobeniusNumber()] if i not in self]) == (self.FrobeniusNumber() + 1)/2
 	
