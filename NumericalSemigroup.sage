@@ -334,6 +334,7 @@ class NumericalSemigroup:
 		self.__bettielements = [None]
 		self.__psuedofrobs = [None]
 		self.__minimalpresentation = [None]
+		self.__oversemigroups = [None]
 		
 		self.__factorizations = {}
 		self.__factorizationquasi = None
@@ -463,6 +464,9 @@ class NumericalSemigroup:
 		return self.__GenericGapCallGlobal(should_use_store_loc, self.__psuedofrobs, 'PseudoFrobeniusOfNumericalSemigroup')
 		# return [[int(j) for j in l] for l in gap('FactorizationsElementWRTNumericalSemigroup(%d,%s)'%(n,self.semigroup.name()))]
 	
+	def Oversemigroups(self):
+		return [NumericalSemigroup().__InitWithGapSemigroup(s) for s in gap('OverSemigroupsNumericalSemigroup(' + self.semigroup.name() + ')')]
+	
 	def Factorizations(self, n, dumb = False, should_use_store_loc = True):
 		if not dumb:
 			return self.__GenericGapCall(n, should_use_store_loc, self.__factorizations, 'FactorizationsElementWRTNumericalSemigroup')
@@ -499,6 +503,9 @@ class NumericalSemigroup:
 	
 	def FactorizationsForElasticities(self):
 		self.FactorizationsUpToElement(self.gens[-1]*self.gens[-2] + self.gens[-1])
+	
+	def LengthSetsForElasticities(self):
+		self.LengthSetsUpToElement(self.gens[-1]*self.gens[-2] + self.gens[-1])
 	
 	def FactorizationGraph(self, n, factorizations = None, relations = None, deltamax = oo):
 		if factorizations == None:
