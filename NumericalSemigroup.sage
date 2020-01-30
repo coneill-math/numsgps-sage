@@ -17,11 +17,11 @@
 # 
 # McNuggets = NumericalSemigroup([6,9,20])
 # 
-# print McNuggets.frob
-# print McNuggets.LengthSet(400)
-# print McNuggets.DeltaSet(400)
-# print McNuggets.OmegaPrimality(400)
-# print McNuggets.CatenaryDegree(400)
+# print(McNuggets.frob)
+# print(McNuggets.LengthSet(400))
+# print(McNuggets.DeltaSet(400))
+# print(McNuggets.OmegaPrimality(400))
+# print(McNuggets.CatenaryDegree(400))
 # 
 ##################
 
@@ -42,7 +42,7 @@
 
 
 
-print gap('LoadPackage("numericalsgps");')
+print(gap('LoadPackage("numericalsgps");'))
 
 # gap('''
 # EqualCatenaryDegreeOfElementInNumericalSemigroup:=function(n,s)
@@ -146,8 +146,8 @@ def TableFromValueMap(valuemap, width = 10):
 		else:
 			tableret = tableret + [['','','']]
 	
-	tableret = [sum([tableret[j*width + i] for i in range(width)],[]) for j in range((nmax - nmin)/width)]
-	#table = [[k for j in range(splits) for k in [[k for j in range(splits) for k in table[splits*i + j]][:-1] for i in range(nmax/splits)]
+	tableret = [sum([tableret[j*width + i] for i in range(width)],[]) for j in range(int((nmax - nmin)/width))]
+	#table = [[k for j in range(splits) for k in [[k for j in range(splits) for k in table[splits*i + j]][:-1] for i in range(int(nmax/splits))]
 	
 	return table(tableret)
 
@@ -258,7 +258,7 @@ class Quasipolynomial:
 				leadingcoeff = [leadingcoeff]*per
 		
 		if l < per*(d+1):
-			print "Not enough values provided!"
+			print("Not enough values provided!")
 			return
 		
 		ret = [[0 for j in [0..per-1]] for i in [0..d]]
@@ -761,7 +761,7 @@ class NumericalSemigroup:
 		
 	# 	# call to find catenary degrees
 	# 	for output in Internal_ParallelCatenaryDegrees([(self.gens,i) for i in mvals]):
-	# 		print output
+	# 		print(output)
 	# 		# self.__catenaries[] = 
 		
 	# 	return
@@ -982,168 +982,168 @@ class NumericalSemigroup:
 	
 	
 	
-	############################################################################
-	######### ONGOING OMEGA-PRIMALITY STUFF - USE AT YOUR OWN RISK! ############
-	############################################################################
+# 	############################################################################
+# 	######### ONGOING OMEGA-PRIMALITY STUFF - USE AT YOUR OWN RISK! ############
+# 	############################################################################
 	
-	def Internal_OmegaManualBullets(self,n):
-		bounds = [max([k + n for k in self.__aperygens[self.gens[i]] if (k + n) % self.gens[i] == 0])/self.gens[i] for i in range(len(self.gens))]
+# 	def Internal_OmegaManualBullets(self,n):
+# 		bounds = [max([k + n for k in self.__aperygens[self.gens[i]] if (k + n) % self.gens[i] == 0])/self.gens[i] for i in range(len(self.gens))]
 		
-		bullet = [0 for i in range(len(self.gens))]
-		toret = []
+# 		bullet = [0 for i in range(len(self.gens))]
+# 		toret = []
 		
-		bullet = bullet
-		bounds = bounds
+# 		bullet = bullet
+# 		bounds = bounds
 		
-		while True:
-			# check if its a bullet
-			bulval = sum([bullet[i]*self.gens[i] for i in range(len(self.gens))])
-			if self.Contains(bulval - n) and all([(bullet[i] == 0 or not(self.Contains(bulval - n - self.gens[i]))) for i in range(len(self.gens))]):
-				toret.append([i for i in bullet])
+# 		while True:
+# 			# check if its a bullet
+# 			bulval = sum([bullet[i]*self.gens[i] for i in range(len(self.gens))])
+# 			if self.Contains(bulval - n) and all([(bullet[i] == 0 or not(self.Contains(bulval - n - self.gens[i]))) for i in range(len(self.gens))]):
+# 				toret.append([i for i in bullet])
 			
-			# increment
-			# MUST IMPROVE
-			for i in range(len(self.gens)):
-				bullet[i] = bullet[i] + 1
-				if bullet[i] <= bounds[i]:
-					break
+# 			# increment
+# 			# MUST IMPROVE
+# 			for i in range(len(self.gens)):
+# 				bullet[i] = bullet[i] + 1
+# 				if bullet[i] <= bounds[i]:
+# 					break
 				
-				bullet[i] = 0
+# 				bullet[i] = 0
 			
-			if max(bullet) == 0:
-				break
+# 			if max(bullet) == 0:
+# 				break
 		
-		# self.__bullets[n] = toret
+# 		# self.__bullets[n] = toret
 		
-		return toret
+# 		return toret
 	
-	def Internal_OmegaDynamicBullets(self,n):
-		if n in self.__bullets.keys():
-			return self.__bullets[n]
+# 	def Internal_OmegaDynamicBullets(self,n):
+# 		if n in self.__bullets.keys():
+# 			return self.__bullets[n]
 		
-		if n < -self.FrobeniusNumber():
-			return [[0 for j in range(len(self.gens))]]
+# 		if n < -self.FrobeniusNumber():
+# 			return [[0 for j in range(len(self.gens))]]
 		
-		#if n <= 0:
-		#	self.__bullets[n] = self.Internal_OmegaManualBullets(n)
-		#	return self.__bullets[n]
+# 		#if n <= 0:
+# 		#	self.__bullets[n] = self.Internal_OmegaManualBullets(n)
+# 		#	return self.__bullets[n]
 		
-		toret = set([])
-		omegaret = 0
+# 		toret = set([])
+# 		omegaret = 0
 		
-		for i in range(len(self.gens)):
-			for bullet in self.Internal_OmegaDynamicBullets(n - self.gens[i]):
-				toadd = list(bullet)
+# 		for i in range(len(self.gens)):
+# 			for bullet in self.Internal_OmegaDynamicBullets(n - self.gens[i]):
+# 				toadd = list(bullet)
 				
-				bulval = sum([bullet[j]*self.gens[j] for j in range(len(self.gens))])
-				omegaval = sum([bullet[j] for j in range(len(self.gens))])
-				if bullet[i] > 0 or not(self.Contains(bulval - n)):
-					toadd[i] = toadd[i] + 1
-					omegaval = omegaval + 1
+# 				bulval = sum([bullet[j]*self.gens[j] for j in range(len(self.gens))])
+# 				omegaval = sum([bullet[j] for j in range(len(self.gens))])
+# 				if bullet[i] > 0 or not(self.Contains(bulval - n)):
+# 					toadd[i] = toadd[i] + 1
+# 					omegaval = omegaval + 1
 				
-				# ensure we dont already have it before we add it
-				if not(tuple(toadd) in toret):
-					toret = toret.union([tuple(toadd)])
+# 				# ensure we dont already have it before we add it
+# 				if not(tuple(toadd) in toret):
+# 					toret = toret.union([tuple(toadd)])
 					
-					if omegaval > omegaret:
-						omegaret = omegaval
+# 					if omegaval > omegaret:
+# 						omegaret = omegaval
 		
-		self.__bullets[n] = list(toret)
-		self.__omegas[n] = omegaret
+# 		self.__bullets[n] = list(toret)
+# 		self.__omegas[n] = omegaret
 		
-		return self.__bullets[n]
+# 		return self.__bullets[n]
 		
 	
-	def Internal_OmegaPrimalityGap(self,n,nmax=n):
-		return ConvertGapToSage(gap('OmegaPrimalityOfElementListInNumericalSemigroup([%d..%d],%s);'%(n,nmax,self.semigroup.name())))
+# 	def Internal_OmegaPrimalityGap(self,n,nmax=n):
+# 		return ConvertGapToSage(gap('OmegaPrimalityOfElementListInNumericalSemigroup([%d..%d],%s);'%(n,nmax,self.semigroup.name())))
 	
-	def Internal_OmegaBullets(self, n):
-		return self.Internal_OmegaDynamicBullets(n)
-	'''
-	def OmegaBullets(self, n):
-		if n in self.__bullets.keys():
-			return self.__bullets[n]
+# 	def Internal_OmegaBullets(self, n):
+# 		return self.Internal_OmegaDynamicBullets(n)
+# 	'''
+# 	def OmegaBullets(self, n):
+# 		if n in self.__bullets.keys():
+# 			return self.__bullets[n]
 		
-		omega = self.OmegaPrimality(n)
+# 		omega = self.OmegaPrimality(n)
 		
-		toret = []
+# 		toret = []
 		
-		if len(self.gens) == 2:
-			for a in (0 .. omega):
-				for b in (0 .. omega-a):
-					ret = [b,a]
-					bullet = sum([ret[i]*self.gens[i] for i in range(len(self.gens))])
+# 		if len(self.gens) == 2:
+# 			for a in (0 .. omega):
+# 				for b in (0 .. omega-a):
+# 					ret = [b,a]
+# 					bullet = sum([ret[i]*self.gens[i] for i in range(len(self.gens))])
 					
-					if self.Contains(bullet - n) and all([(ret[i] == 0 or not(self.Contains(bullet - n - self.gens[i]))) for i in range(len(self.gens))]):
-						toret.append(ret)
+# 					if self.Contains(bullet - n) and all([(ret[i] == 0 or not(self.Contains(bullet - n - self.gens[i]))) for i in range(len(self.gens))]):
+# 						toret.append(ret)
 		
-		if len(self.gens) == 3:
-			for a in (0 .. omega):
-				for b in (0 .. omega-a):
-					for c in (0 .. omega-a-b):
-						ret = [c,b,a]
-						bullet = sum([ret[i]*self.gens[i] for i in range(len(self.gens))])
+# 		if len(self.gens) == 3:
+# 			for a in (0 .. omega):
+# 				for b in (0 .. omega-a):
+# 					for c in (0 .. omega-a-b):
+# 						ret = [c,b,a]
+# 						bullet = sum([ret[i]*self.gens[i] for i in range(len(self.gens))])
 						
-						if self.Contains(bullet - n) and all([(ret[i] == 0 or not(self.Contains(bullet - n - self.gens[i]))) for i in range(len(self.gens))]):
-							toret.append(ret)
+# 						if self.Contains(bullet - n) and all([(ret[i] == 0 or not(self.Contains(bullet - n - self.gens[i]))) for i in range(len(self.gens))]):
+# 							toret.append(ret)
 		
-		if len(self.gens) == 4:
-			for a in (0 .. omega):
-				for b in (0 .. omega-a):
-					for c in (0 .. omega-a-b):
-						for d in (0 .. omega-a-b-c):
-							ret = [d,c,b,a]
-							bullet = sum([ret[i]*self.gens[i] for i in range(len(self.gens))])
+# 		if len(self.gens) == 4:
+# 			for a in (0 .. omega):
+# 				for b in (0 .. omega-a):
+# 					for c in (0 .. omega-a-b):
+# 						for d in (0 .. omega-a-b-c):
+# 							ret = [d,c,b,a]
+# 							bullet = sum([ret[i]*self.gens[i] for i in range(len(self.gens))])
 							
-							if self.Contains(bullet - n) and all([(ret[i] == 0 or not(self.Contains(bullet - n - self.gens[i]))) for i in range(len(self.gens))]):
-								toret.append(ret)
+# 							if self.Contains(bullet - n) and all([(ret[i] == 0 or not(self.Contains(bullet - n - self.gens[i]))) for i in range(len(self.gens))]):
+# 								toret.append(ret)
 		
-		self.__bullets[n] = toret
+# 		self.__bullets[n] = toret
 		
-		return toret
-	'''
+# 		return toret
+# 	'''
 	
-	def Internal_OmegaMaxBullets(self, n):
-		if not(n in self.__maxbullets.keys()):
-			self.__maxbullets[n] = [bul for bul in self.Internal_OmegaBullets(n) if sum(bul) == self.OmegaPrimality(n)]
+# 	def Internal_OmegaMaxBullets(self, n):
+# 		if not(n in self.__maxbullets.keys()):
+# 			self.__maxbullets[n] = [bul for bul in self.Internal_OmegaBullets(n) if sum(bul) == self.OmegaPrimality(n)]
 		
-		return self.__maxbullets[n]
+# 		return self.__maxbullets[n]
 	
-	def Internal_HTMLOmegaTable(self,nmax,splits = 0):
-		if splits == 0:
-			splits = min(self.gens)
+# 	def Internal_HTMLOmegaTable(self,nmax,splits = 0):
+# 		if splits == 0:
+# 			splits = min(self.gens)
 		
-		table = []
-		nmax = nmax - (nmax % splits)
+# 		table = []
+# 		nmax = nmax - (nmax % splits)
 		
-		for i in (1 .. nmax):
-			if not(i in self.gaps):
-				bullets = self.OmegaMaxBullets(i)
-				if len(bullets) == 0:
-					table.append([i, self.OmegaPrimality(i), '', ''])
-				else:
-					table.append([i, self.OmegaPrimality(i), (bullets[0],len(bullets)), ''])
-			else:
-				table.append(['','','',''])
+# 		for i in (1 .. nmax):
+# 			if not(i in self.gaps):
+# 				bullets = self.OmegaMaxBullets(i)
+# 				if len(bullets) == 0:
+# 					table.append([i, self.OmegaPrimality(i), '', ''])
+# 				else:
+# 					table.append([i, self.OmegaPrimality(i), (bullets[0],len(bullets)), ''])
+# 			else:
+# 				table.append(['','','',''])
 		
-		# nmax = len(table)
-		# nmax = nmax - (nmax % splits)
+# 		# nmax = len(table)
+# 		# nmax = nmax - (nmax % splits)
 		
-		table = [[k for j in range(splits) for k in ['n','Omega(n)','maxbullet','']][:-1]]
-		table = table + [[k for j in range(splits) for k in table[splits*i + j]][:-1] for i in range(nmax/splits)]
+# 		table = [[k for j in range(splits) for k in ['n','Omega(n)','maxbullet','']][:-1]]
+# 		table = table + [[k for j in range(splits) for k in table[splits*i + j]][:-1] for i in range(nmax/splits)]
 		
-		return html.table(table)
+# 		return html.table(table)
 	
-	def PlotOmegaValues(self,maxval):
-		pointList = []
+# 	def PlotOmegaValues(self,maxval):
+# 		pointList = []
 		
-		self.OmegaCumulative(maxval)
+# 		self.OmegaCumulative(maxval)
 		
-		for i in range(0,maxval):
-			if i in self:
-				pointList.append((i,self.OmegaPrimality(i)))
+# 		for i in range(0,maxval):
+# 			if i in self:
+# 				pointList.append((i,self.OmegaPrimality(i)))
 		
-		return points(pointList, size=40)
+# 		return points(pointList, size=40)
 	
 	
 
@@ -1549,5 +1549,5 @@ end;
 #for line in GAPCODESTR_FASTOMEGA.split('\n'):
 #	gap.eval(line)
 
-#print gap('OmegaPrimalityOfElementListInNumericalSemigroup([0..1000],NumericalSemigroup("generators", [6,9,20]));')
+#print(gap('OmegaPrimalityOfElementListInNumericalSemigroup([0..1000],NumericalSemigroup("generators", [6,9,20]));'))
 
