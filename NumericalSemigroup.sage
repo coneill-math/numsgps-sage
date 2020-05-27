@@ -595,6 +595,13 @@ class NumericalSemigroup:
 			
 			self.__lengthsets[n] = sorted(list(Set(self.__lengthsets[n])))
 	
+	def LengthDensity(self, n):
+		L = self.LengthSet(n)
+		if len(L) == 1:
+			return 1
+		
+		return (len(L) - Rational(1))/(max(L) - min(L))
+	
 	def WeightVector(self):
 		return self.__weight
 	
