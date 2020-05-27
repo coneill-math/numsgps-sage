@@ -598,7 +598,7 @@ class NumericalSemigroup:
 	def LengthDensity(self, n):
 		L = self.LengthSet(n)
 		if len(L) == 1:
-			return 1
+			return NaN
 		
 		return (len(L) - Rational(1))/(max(L) - min(L))
 	
