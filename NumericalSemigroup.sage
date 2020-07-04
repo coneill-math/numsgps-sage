@@ -332,6 +332,7 @@ class NumericalSemigroup:
 		self.__frob = [None]
 		self.__type = [None]
 		self.__bettielements = [None]
+		self.__higherbettinumbers = None
 		self.__psuedofrobs = [None]
 		self.__minimalpresentation = [None]
 		self.__oversemigroups = [None]
@@ -441,6 +442,10 @@ class NumericalSemigroup:
 	#	return NumericalSemigroup([a1*g for g in self.gens] + [a2*g for g in S2.gens])
 	
 	def BettiElements(self, should_use_store_loc = True):
+		if self.__minimalpresentation != [None]:
+			self.__bettielements = list(sorted([sum([a*b for (a,b) in zip(f1,self.gens)]) for [f1,f2] in self.__minimalpresentation[0]]))
+			return self.__bettielements
+		
 		return self.__GenericGapCallGlobal(should_use_store_loc, self.__bettielements, 'BettiElementsOfNumericalSemigroup')
 	
 	def MinimalPresentation(self, should_use_store_loc = True):
@@ -544,6 +549,24 @@ class NumericalSemigroup:
 	
 	def PlotPresentationGraph(self, n, factorizations = None, relations = None):
 		return self.PresentationGraph(n, factorizations, relations).plot(layout="circular", vertex_size=2000)
+	
+	def SquarefreeDivisorComplex(self, n):
+		def f(G):
+			return n - sum(G) in self
+		
+		return SimplicialComplex(from_characteristic_function=(f, self.gens))
+	
+	def HigherBettiNumbers(self, with_multiplicity = True):
+		if self.__higherbettinumbers == None:
+			last = self.FrobeniusNumber() + sum(self.gens)
+			complexes = {n:self.SquarefreeDivisorComplex(n) for n in [1 .. last]}
+			homologies = {n:complexes[n].homology() for n in complexes}
+			self.__higherbettinumbers = {i+1:sum([[n]*len(homologies[n][i].gens()) for n in homologies if i in homologies[n]], []) for i in [0 .. len(S.gens)-2]}
+		
+		if with_multiplicity:
+			return self.__higherbettinumbers
+		else:
+			return {i:list(set(self.__higherbettinumbers[i])) for i in self.__higherbettinumbers}
 	
 	def FactorizationQuasipolynomial(self):
 		if self.__factorizationquasi == None:
