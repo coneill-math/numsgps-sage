@@ -438,6 +438,15 @@ class NumericalSemigroup:
 	def Gluings(self, should_use_store_loc = True):
 		return self.__GenericGapCallGlobal(should_use_store_loc, self.__gluings, 'AsGluingOfNumericalSemigroups')
 	
+	def KunzCoordinates(self, m = None):
+		if m == None:
+			m = min(self.gens)
+		
+		ap = self.AperySet(m)
+		coords = [(ap[i] - i)/m for i in range(1,len(ap))]
+		
+		return coords
+	
 	#def Glue(self, S2, a1, a2):
 	#	return NumericalSemigroup([a1*g for g in self.gens] + [a2*g for g in S2.gens])
 	
@@ -944,6 +953,13 @@ class NumericalSemigroup:
 		return (self.FrobeniusNumber() + self.gens[1])*self.gens[0]/(self.gens[1]-self.gens[0])
 	
 	@staticmethod
+	def FromKunzCoordinates(coords):
+		m = len(coords)+1
+		S = NumericalSemigroup([m] + [coords[i]*m + (i+1) for i in range(len(coords))])
+		
+		return S
+	
+	@staticmethod
 	def SemigroupsWithFrobeniusNumber(f):
 		return [NumericalSemigroup().__InitWithGapSemigroup(s) for s in gap('NumericalSemigroupsWithFrobeniusNumber(' + str(f) + ')')]
 		#for s in gap('NumericalSemigroupsWithFrobeniusNumber(' + str(f) + ')'):
@@ -1196,43 +1212,43 @@ LoadPackage("IO")
 ## computes the adjacent catenary degree of the set of factorizations ls
 ###################################################################
 AdjacentCatenaryDegreeOfSetOfFactorizations:=function(ls)
-    local distance, Fn, lenset, Zi, facti, i;
+	local distance, Fn, lenset, Zi, facti, i;
 
 
 	if not(IsRectangularTable(ls) and IsListOfIntegersNS(ls[1])) then
 		Error("The argument is not a list of factorizations.");
 	fi;
 
-    # Tomado de CatenaryDegreeOfElementInNumericalSemigroup_NC
-    # distance between two factorizations
-    distance:=function(x,y)
-        local p,n,i,z;
+	# Tomado de CatenaryDegreeOfElementInNumericalSemigroup_NC
+	# distance between two factorizations
+	distance:=function(x,y)
+		local p,n,i,z;
 
-        p:=0; n:=0;
-        z:=x-y;
-        for i in [1..Length(z)] do
-            if z[i]>0 then
-                p:=p+z[i];
-            else
-                n:=n+z[i];
-            fi;
-        od;
+		p:=0; n:=0;
+		z:=x-y;
+		for i in [1..Length(z)] do
+			if z[i]>0 then
+				p:=p+z[i];
+			else
+				n:=n+z[i];
+			fi;
+		od;
 
-        return Maximum(p,-n);
-    end;    
+		return Maximum(p,-n);
+	end;    
 
 	Fn:=Set(ShallowCopy(ls));
-    lenset:=Set( ls, Sum );
-    if Length(lenset)=1 then 
+	lenset:=Set( ls, Sum );
+	if Length(lenset)=1 then 
 	return 0;
-    fi;
-    Zi:=[];
-    for i in lenset do
-        facti:=Filtered( Fn, x->Sum(x)=i );
-        SubtractSet( Fn, facti );
-        Add( Zi, facti );
-    od;
-    return Maximum( List( [2..Length( Zi )], t->Minimum( List( Zi[t-1], x->Minimum( List( Zi[t], y->distance( x, y ) ) ) ) ) ) );
+	fi;
+	Zi:=[];
+	for i in lenset do
+		facti:=Filtered( Fn, x->Sum(x)=i );
+		SubtractSet( Fn, facti );
+		Add( Zi, facti );
+	od;
+	return Maximum( List( [2..Length( Zi )], t->Minimum( List( Zi[t-1], x->Minimum( List( Zi[t], y->distance( x, y ) ) ) ) ) ) );
 end;
 
 
@@ -1241,7 +1257,7 @@ end;
 ## computes the equal catenary degree of of the set of factorizations
 ###################################################################
 EqualCatenaryDegreeOfSetOfFactorizations:=function(ls)
-    local distance, lFni;
+	local distance, lFni;
 
 	if not(IsRectangularTable(ls) and IsListOfIntegersNS(ls[1])) then
 		Error("The argument is not a list of factorizations.");
@@ -1249,25 +1265,25 @@ EqualCatenaryDegreeOfSetOfFactorizations:=function(ls)
 
  
    # distance between two factorizations
-    distance:=function(x,y)
-        local p,n,i,z;
+	distance:=function(x,y)
+		local p,n,i,z;
 
-        p:=0; n:=0;
-        z:=x-y;
-        for i in [1..Length(z)] do
-            if z[i]>0 then
-                p:=p+z[i];
-            else
-                n:=n+z[i];
-            fi;
-        od;
+		p:=0; n:=0;
+		z:=x-y;
+		for i in [1..Length(z)] do
+			if z[i]>0 then
+				p:=p+z[i];
+			else
+				n:=n+z[i];
+			fi;
+		od;
 
-        return Maximum(p,-n);
-    end;    
+		return Maximum(p,-n);
+	end;    
 
 
-    lFni:=Set( ls, t->Sum( t ) );
-    return Maximum( List( lFni, y->CatenaryDegreeOfSetOfFactorizations( Filtered( ls, x->Sum( x )=y ) ) ) );
+	lFni:=Set( ls, t->Sum( t ) );
+	return Maximum( List( lFni, y->CatenaryDegreeOfSetOfFactorizations( Filtered( ls, x->Sum( x )=y ) ) ) );
 end;
 
 ###################################################################
@@ -1275,7 +1291,7 @@ end;
 ## computes the equal catenary degree of of the set of factorizations
 ###################################################################
 MonotoneCatenaryDegreeOfSetOfFactorizations:=function(ls)
-    return Maximum(AdjacentCatenaryDegreeOfSetOfFactorizations(ls), 
+	return Maximum(AdjacentCatenaryDegreeOfSetOfFactorizations(ls), 
 		EqualCatenaryDegreeOfSetOfFactorizations( ls ));
 end;
 
@@ -1290,9 +1306,9 @@ end;
 MonotonePrimitiveElementsOfNumericalSemigroup:=function(s)
 	local l, n, facs, mat, ones;
 
-    if not IsNumericalSemigroup(s) then
-        Error("The argument must be a numerical semigroup.");
-    fi;
+	if not IsNumericalSemigroup(s) then
+		Error("The argument must be a numerical semigroup.");
+	fi;
 
 	if LoadPackage("4ti2interface")=false then
 		Error("This function requires 4ti2interface package");
@@ -1312,29 +1328,29 @@ end;
 # graver version, 4ti2
 #####
 MonotonePrimitiveElementsOfNumericalSemigroup_graver:=function(s)
-    local dir, filename, exec, filestream, matrix,
+	local dir, filename, exec, filestream, matrix,
 				l, n,  facs, mat, trunc;
-    
-    dir := DirectoryTemporary();
-    filename := Filename( dir, "gap_4ti2_temp_matrix" );
+	
+	dir := DirectoryTemporary();
+	filename := Filename( dir, "gap_4ti2_temp_matrix" );
 
 	l:=MinimalGeneratingSystemOfNumericalSemigroup(s);
 	n:=Length(l);
 	mat:=[];
 	mat[1]:=Concatenation(l,[0]);
 	mat[2]:=List([1..n+1],_->1);
-    4ti2Interface_Write_Matrix_To_File( mat, Concatenation( filename, ".mat" ) );
-    exec := IO_FindExecutable( "graver" );
-    filestream := IO_Popen2( exec, [ filename ]);
-    while IO_ReadLine( filestream.stdout ) <> "" do od;
-    matrix := 4ti2Interface_Read_Matrix_From_File( Concatenation( filename, ".gra" ) );
+	4ti2Interface_Write_Matrix_To_File( mat, Concatenation( filename, ".mat" ) );
+	exec := IO_FindExecutable( "graver" );
+	filestream := IO_Popen2( exec, [ filename ]);
+	while IO_ReadLine( filestream.stdout ) <> "" do od;
+	matrix := 4ti2Interface_Read_Matrix_From_File( Concatenation( filename, ".gra" ) );
 
-    trunc:=function(ls)
+	trunc:=function(ls)
 		return List(ls, y->Maximum(y,0));
 	end;
 
 	matrix:=Set(matrix,trunc);
-    return Set(matrix, x->x{[1..n]}*l);
+	return Set(matrix, x->x{[1..n]}*l);
 
 end;
 
@@ -1348,9 +1364,9 @@ end;
 PrimitiveElementsOfNumericalSemigroup:=function(s)
 	local l, n, facs, mat;
 
-    if not IsNumericalSemigroup(s) then
-        Error("The argument must be a numerical semigroup.");
-    fi;
+	if not IsNumericalSemigroup(s) then
+		Error("The argument must be a numerical semigroup.");
+	fi;
 
 
 	l:=MinimalGeneratingSystemOfNumericalSemigroup(s);
@@ -1364,26 +1380,26 @@ end;
 # graver version, 4ti2
 #####
 PrimitiveElementsOfNumericalSemigroup_graver:=function(s)
-    local dir, filename, exec, filestream, matrix,
+	local dir, filename, exec, filestream, matrix,
 				l,  facs, mat, trunc;
-    
-    dir := DirectoryTemporary();
-    filename := Filename( dir, "gap_4ti2_temp_matrix" );
+	
+	dir := DirectoryTemporary();
+	filename := Filename( dir, "gap_4ti2_temp_matrix" );
 
 	l:=MinimalGeneratingSystemOfNumericalSemigroup(s);
 	mat:=[l];
-    4ti2Interface_Write_Matrix_To_File( mat, Concatenation( filename, ".mat" ) );
-    exec := IO_FindExecutable( "graver" );
-    filestream := IO_Popen2( exec, [ filename ]);
-    while IO_ReadLine( filestream.stdout ) <> "" do od;
-    matrix := 4ti2Interface_Read_Matrix_From_File( Concatenation( filename, ".gra" ) );
+	4ti2Interface_Write_Matrix_To_File( mat, Concatenation( filename, ".mat" ) );
+	exec := IO_FindExecutable( "graver" );
+	filestream := IO_Popen2( exec, [ filename ]);
+	while IO_ReadLine( filestream.stdout ) <> "" do od;
+	matrix := 4ti2Interface_Read_Matrix_From_File( Concatenation( filename, ".gra" ) );
 
-    trunc:=function(ls)
+	trunc:=function(ls)
 		return List(ls, y->Maximum(y,0));
 	end;
 
 	matrix:=Set(matrix,trunc);
-    return Set(matrix, x->x*l);
+	return Set(matrix, x->x*l);
 end;
 
 
@@ -1391,28 +1407,28 @@ end;
 # graver version, 4ti2
 #####
 EqualPrimitiveElementsOfNumericalSemigroup:=function(s)
-    local dir, filename, exec, filestream, matrix,
+	local dir, filename, exec, filestream, matrix,
 				l,  facs, mat, trunc;
-    
-    dir := DirectoryTemporary();
-    filename := Filename( dir, "gap_4ti2_temp_matrix" );
+	
+	dir := DirectoryTemporary();
+	filename := Filename( dir, "gap_4ti2_temp_matrix" );
 
 	l:=MinimalGeneratingSystemOfNumericalSemigroup(s);
 	mat:=[l];
 	mat[2]:=List([1..Length(l),_->1);
 
-    4ti2Interface_Write_Matrix_To_File( mat, Concatenation( filename, ".mat" ) );
-    exec := IO_FindExecutable( "graver" );
-    filestream := IO_Popen2( exec, [ filename ]);
-    while IO_ReadLine( filestream.stdout ) <> "" do od;
-    matrix := 4ti2Interface_Read_Matrix_From_File( Concatenation( filename, ".gra" ) );
+	4ti2Interface_Write_Matrix_To_File( mat, Concatenation( filename, ".mat" ) );
+	exec := IO_FindExecutable( "graver" );
+	filestream := IO_Popen2( exec, [ filename ]);
+	while IO_ReadLine( filestream.stdout ) <> "" do od;
+	matrix := 4ti2Interface_Read_Matrix_From_File( Concatenation( filename, ".gra" ) );
 
-    trunc:=function(ls)
+	trunc:=function(ls)
 		return List(ls, y->Maximum(y,0));
 	end;
 
 	matrix:=Set(matrix,trunc);
-    return Set(matrix, x->x*l);
+	return Set(matrix, x->x*l);
 end;
 
 
@@ -1424,9 +1440,9 @@ end;
 ####################################################################
 AdjacentCatenaryDegreeOfNumericalSemigroup:=function(s)
 	local prim, msg;
-    if not IsNumericalSemigroup(s) then
-        Error("The argument must be a numerical semigroup.");
-    fi;
+	if not IsNumericalSemigroup(s) then
+		Error("The argument must be a numerical semigroup.");
+	fi;
 
 	msg:=MinimalGeneratingSystemOfNumericalSemigroup(s);
 	prim:=MonotonePrimitiveElementsOfNumericalSemigroup(s);
@@ -1443,9 +1459,9 @@ end;
 ####################################################################
 EqualCatenaryDegreeOfNumericalSemigroup:=function(s)
 	local prim, msg;
-    if not IsNumericalSemigroup(s) then
-        Error("The argument must be a numerical semigroup.");
-    fi;
+	if not IsNumericalSemigroup(s) then
+		Error("The argument must be a numerical semigroup.");
+	fi;
 
 	msg:=EqualMinimalGeneratingSystemOfNumericalSemigroup(s);
 	prim:=PrimitiveElementsOfNumericalSemigroup(s);
@@ -1462,9 +1478,9 @@ end;
 ####################################################################
 MonotoneCatenaryDegreeOfNumericalSemigroup:=function(s)
 	local prim, msg;
-    if not IsNumericalSemigroup(s) then
-        Error("The argument must be a numerical semigroup.");
-    fi;
+	if not IsNumericalSemigroup(s) then
+		Error("The argument must be a numerical semigroup.");
+	fi;
 
 	msg:=MinimalGeneratingSystemOfNumericalSemigroup(s);
 	prim:=MonotonePrimitiveElementsOfNumericalSemigroup(s);
