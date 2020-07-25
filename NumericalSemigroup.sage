@@ -672,17 +672,12 @@ class NumericalSemigroup:
 		nr  = self.gens[len(self.gens) - 1]
 		lcmRes = lcm(n1, nr)
 		
-		self.LengthSetsUpToElement(self.LengthSetPeriodicityBound())
-		ds = self.DeltaSet()
-		
-		if len(ds) == 0:
-			return 1
-		
-		g = min(ds)
-		a1 = (nr - n1)/(g*nr*n1)
+		g = gcd([self.gens[i+1] - self.gens[i] for i in range(len(self.gens)-1)])
+		a1 = ((nr - n1) * lcmRes)/(g*nr*n1)
 		counter = 0
 		i = nr + 1
-		lsMap = {}
+		
+		self.LengthSetsUpToElement(self.LengthSetPeriodicityBound() + lcmRes)
 		
 		while counter < lcmRes:
 			if i not in self:
@@ -690,12 +685,7 @@ class NumericalSemigroup:
 				i += 1
 				continue
 			
-			ls1 = lsMap[i] if i in lsMap else self.LengthSet(i)
-			ls2 = self.LengthSet(i + lcmRes)
-			lsMap[i] = ls1
-			lsMap[i + lcmRes] = ls2
-			
-			if len(ls2) - len(ls1) == a1 * lcmRes:
+			if len(self.LengthSet(i + lcmRes)) - len(self.LengthSet(i)) == a1:
 				counter += 1
 			else:
 				counter = 0
