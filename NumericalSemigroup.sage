@@ -633,6 +633,62 @@ class NumericalSemigroup:
 			return NaN
 		
 		return (len(L) - Rational(1))/(max(L) - min(L))
+
+	def N_S(self):
+		a = self.gens
+		if len(a) == 1:
+			return 1
+		elif len(a) == 2:
+			return (a[0] - 1)*(a[1] - 1)
+		r = len(self.gens)
+		d = min(self.DeltaSet())
+
+		def _S_i(i):
+			gcdRes = gcd(gcd(a[i] - a[0], a[0] - a[r-1]), a[r-1] - a[i])
+			num = a[1] * (a[0] * d * gcdRes + (r-2)*(a[0] - a[i])*(a[0] - a[r-1]))
+			denom = (a[0] - a[1]) * gcdRes
+			return - (num / denom)
+
+		def _Sprime_i(i):
+			gcdRes = gcd(gcd(a[i] - a[0], a[0] - a[r-1]), a[r-1] - a[i])
+			num = a[r-2]*((r - 2)*(a[0]-a[r-1])*(a[r-1]-a[i]) - d*a[r-1]*gcdRes)
+			denom = (a[r-2] - a[r-1])*gcdRes
+			return num/denom
+
+		S_i      = []
+		Sprime_i = []
+		for i in range(1, len(a)):
+			S_i.append(_S_i(i))
+			Sprime_i.append(_Sprime_i(i))
+		return ceil(max(max(S_i), max(Sprime_i)))
+
+	def l_S(self):
+		n1     = self.gens[0]
+		nr     = self.gens[len(self.gens)-1]
+		lcmRes = lcm(n1, nr)
+		ds     = self.DeltaSet()
+		if len(ds) == 0:
+			return 1
+		g       = min(ds)
+		a1      = (nr - n1)/(g*nr*n1)
+		counter = 0
+		i       = nr + 1
+		lsMap  = {}
+		while counter < lcmRes:
+			if not i in self:
+				counter = 0
+				i += 1
+				continue
+			ls1 = lsMap[i] if i in lsMap else self.LengthSet(i)
+			ls2 = self.LengthSet(i + lcmRes)
+			lsMap[i] = ls1
+			lsMap[i + lcmRes] = ls2
+			if len(ls2) - len(ls1) == a1 * lcmRes:
+				counter += 1
+			else:
+				counter = 0
+			i += 1
+		return i - lcmRes
 	
 	def WeightVector(self):
 		return self.__weight
