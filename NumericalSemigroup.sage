@@ -668,31 +668,21 @@ class NumericalSemigroup:
 		return ceil(max(max(S_i), max(Sprime_i)))
 
 	def LengthSetPeriodicityStart(self):
+		if len(self.gens) == 1:
+			return 1
 		n1 = self.gens[0]
 		nr  = self.gens[len(self.gens) - 1]
 		lcmRes = lcm(n1, nr)
 		
 		g = gcd([self.gens[i+1] - self.gens[i] for i in range(len(self.gens)-1)])
 		a1 = ((nr - n1) * lcmRes)/(g*nr*n1)
-		counter = 0
-		i = nr + 1
+		i = self.LengthSetPeriodicityBound()
 		
-		self.LengthSetsUpToElement(self.LengthSetPeriodicityBound() + lcmRes)
+		self.LengthSetsUpToElement(i + lcmRes)
 		
-		while counter < lcmRes:
-			if i not in self:
-				counter = 0
-				i += 1
-				continue
-			
-			if len(self.LengthSet(i + lcmRes)) - len(self.LengthSet(i)) == a1:
-				counter += 1
-			else:
-				counter = 0
-			
-			i += 1
-		
-		return i - lcmRes
+		while i in self and len(self.LengthSet(i + lcmRes)) - len(self.LengthSet(i)) == a1:
+			i -= 1
+		return i + 1
 	
 	def WeightVector(self):
 		return self.__weight
