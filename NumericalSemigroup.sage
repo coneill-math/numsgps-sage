@@ -392,11 +392,14 @@ class NumericalSemigroup:
 	def IsSymmetric(self):
 		return self.FrobeniusNumber() % 2 == 1 and len([i for i in [1..self.FrobeniusNumber()] if i not in self]) == (self.FrobeniusNumber() + 1)/2
 	
-	def __GenericGapCallGlobal(self, should_use_store_loc, store_loc, gapfuncname):
+	def __GenericGapCallGlobal(self, should_use_store_loc, store_loc, gapfuncname, insert_inputs = True):
 		if should_use_store_loc and store_loc[0] != None:
 			return store_loc[0]
 		
-		ret = ConvertGapToSage(gap(gapfuncname + '(' + self.semigroup.name() + ')'))
+		if insert_inputs:
+			ret = ConvertGapToSage(gap(gapfuncname + '(' + self.semigroup.name() + ')'))
+		else:
+			ret = ConvertGapToSage(gap(gapfuncname))
 		
 		if should_use_store_loc:
 			store_loc[0] = ret
@@ -750,9 +753,13 @@ class NumericalSemigroup:
 		
 		return self.__lensetquasi
 	
-	def DeltaSet(self, n = None, should_use_store_loc = True):
+	def DeltaSet(self, n = None, should_use_affine_alg = False, should_use_store_loc = True):
 		if n == None:
-			return self.__GenericGapCallGlobal(should_use_store_loc, self.__deltaset, 'DeltaSetOfNumericalSemigroup')
+			if should_use_affine_alg:
+				affinestr = 'DeltaSetOfAffineSemigroup(AffineSemigroupByGenerators(%s))' % ",".join(['[%d]' % g for g in self.gens])
+				return self.__GenericGapCallGlobal(should_use_store_loc, self.__deltaset, affinestr, insert_inputs=False)
+			else:
+				return self.__GenericGapCallGlobal(should_use_store_loc, self.__deltaset, 'DeltaSetOfNumericalSemigroup')
 		
 		if n not in self.__deltasets:
 			self.__deltasets[n] = DeltaSetFromLengthSet(self.LengthSet(n))
