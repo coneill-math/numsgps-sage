@@ -44,6 +44,9 @@
 
 print(gap('LoadPackage("numericalsgps");'))
 
+if gap('NumSgpsUseSingular();'):
+	print("Successfully loaded Singular")
+
 # gap('''
 # EqualCatenaryDegreeOfElementInNumericalSemigroup:=function(n,s)
 # 	return EqualCatenaryDegreeOfSetOfFactorizations(FactorizationsElementWRTNumericalSemigroup(n,s));
