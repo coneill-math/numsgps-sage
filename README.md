@@ -23,8 +23,8 @@ The following code fragment gives an overview of how to use the `NumericalSemigr
 
 	load('/PATH_TO_FILE/NumericalSemigroup.sage')
 	McNuggets = NumericalSemigroup([6,9,20])
-	print McNuggets.FrobeniusNumber()
-	print McNuggets.LengthSet(400)
-	print McNuggets.DeltaSet(400)
-	print McNuggets.OmegaPrimality(400)
-	print McNuggets.CatenaryDegree(400)
+	print(McNuggets.FrobeniusNumber())
+	print(McNuggets.LengthSet(400))
+	print(McNuggets.DeltaSet(400))
+	print(McNuggets.OmegaPrimality(400))
+	print(McNuggets.CatenaryDegree(400))
