@@ -1,5 +1,6 @@
 FROM sagemath/sagemath
-RUN yes | sudo apt update; yes | sudo apt-get upgrade; yes | sudo apt install curl wget build-essential python3-urllib3;
+
+RUN yes | sudo apt update; yes | sudo apt-get upgrade; yes | sudo DEBIAN_FRONTEND=noninteractive apt install curl wget build-essential python3-urllib3;
 
 RUN GAP_INSTALL_DIR=`sudo find / -name "GAPDoc*" | head -n 1 | xargs dirname`; \
 	\
@@ -10,6 +11,10 @@ RUN GAP_INSTALL_DIR=`sudo find / -name "GAPDoc*" | head -n 1 | xargs dirname`; \
 	tar -xvf "${GAP_INSTALL_DIR}/singular-2019.10.01.tar.gz" -C "${GAP_INSTALL_DIR}";
 
 RUN cd /home/sage/sage && wget https://github.com/sagemath/sage/blob/develop/configure.ac; sage -p 4ti2;
+
+RUN sage -p nauty
+
+RUN sage -p e_antic
 
 RUN sage -p normaliz
 
