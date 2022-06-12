@@ -576,7 +576,7 @@ class NumericalSemigroup:
 			last = self.FrobeniusNumber() + sum(self.gens)
 			complexes = {n:self.SquarefreeDivisorComplex(n) for n in [1 .. last]}
 			homologies = {n:complexes[n].homology() for n in complexes}
-			self.__higherbettinumbers = {i+1:sum([[n]*len(homologies[n][i].gens()) for n in homologies if i in homologies[n]], []) for i in [0 .. len(S.gens)-1]}
+			self.__higherbettinumbers = {i+1:sum([[n]*len(homologies[n][i].gens()) for n in homologies if i in homologies[n]], []) for i in [0 .. len(self.gens)-1]}
 		
 		if with_multiplicity:
 			return self.__higherbettinumbers
