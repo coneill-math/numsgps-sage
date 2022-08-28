@@ -1,6 +1,7 @@
 FROM sagemath/sagemath
 
-RUN yes | sudo apt update; yes | sudo apt-get upgrade; yes | sudo DEBIAN_FRONTEND=noninteractive apt install curl wget build-essential python3-urllib3;
+# added sed command to avoid Ubuntu impish "end of life" warnings
+RUN sudo sed -i -e 's|impish|jammy|g' /etc/apt/sources.list; yes | sudo apt update; yes | sudo apt-get upgrade; yes | sudo DEBIAN_FRONTEND=noninteractive apt install curl wget build-essential python3-urllib3;
 
 RUN GAP_INSTALL_DIR=`sudo find / -name "GAPDoc*" | head -n 1 | xargs dirname`; \
 	\
@@ -23,3 +24,9 @@ RUN sage -p pynormaliz
 RUN sage -c "gap_reset_workspace()"
 
 RUN sudo curl https://raw.githubusercontent.com/coneill-math/numsgps-sage/master/NumericalSemigroup.sage --output "/NumericalSemigroup.sage"
+
+RUN sudo curl https://raw.githubusercontent.com/coneill-math/kunzpolyhedron/master/KunzPoset.sage --output "/KunzPoset.sage"
+RUN sudo curl https://raw.githubusercontent.com/coneill-math/kunzpolyhedron/master/PlotKunzPoset.sage --output "/PlotKunzPoset.sage"
+RUN sudo curl https://raw.githubusercontent.com/coneill-math/kunzpolyhedron/master/PlotKunzPoset3D.sage --output "/PlotKunzPoset3D.sage"
+
+
