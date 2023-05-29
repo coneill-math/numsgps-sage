@@ -761,7 +761,7 @@ class NumericalSemigroup:
 		
 		return self.__lensetquasi
 	
-	def DeltaSet(self, n = None, should_use_affine_alg = False, should_use_store_loc = True):
+	def DeltaSet(self, n = None, should_use_affine_alg = True, should_use_store_loc = True):
 		if n == None:
 			if should_use_affine_alg:
 				affinestr = 'DeltaSetOfAffineSemigroup(AffineSemigroupByGenerators(%s))' % ",".join(['[%d]' % g for g in self.gens])

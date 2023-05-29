@@ -1,17 +1,19 @@
-FROM sagemath/sagemath
+FROM sagemath/sagemath:9.5
 
 # added sed command to avoid Ubuntu impish "end of life" warnings
 RUN sudo sed -i -e 's|impish|jammy|g' /etc/apt/sources.list; yes | sudo apt update; yes | sudo apt-get upgrade; yes | sudo DEBIAN_FRONTEND=noninteractive apt install curl wget build-essential python3-urllib3;
 
 RUN GAP_INSTALL_DIR=`sudo find / -name "GAPDoc*" | head -n 1 | xargs dirname`; \
 	\
-	curl https://files.gap-system.org/gap4/tar.gz/packages/NumericalSgps-1.2.1.tar.gz --output "${GAP_INSTALL_DIR}/NumericalSgps-1.2.1.tar.gz"; \
-	tar -xvf "${GAP_INSTALL_DIR}/NumericalSgps-1.2.1.tar.gz" -C "${GAP_INSTALL_DIR}"; \
+	curl -L https://github.com/gap-packages/numericalsgps/releases/download/v1.2.1/NumericalSgps-1.2.1.tar.gz --output "${GAP_INSTALL_DIR}/NumericalSgps.tar.gz"; \
+	tar -xvf "${GAP_INSTALL_DIR}/NumericalSgps.tar.gz" -C "${GAP_INSTALL_DIR}"; \
 	\
-	curl https://files.gap-system.org/gap4/tar.gz/packages/singular-2019.10.01.tar.gz --output "${GAP_INSTALL_DIR}/singular-2019.10.01.tar.gz"; \
-	tar -xvf "${GAP_INSTALL_DIR}/singular-2019.10.01.tar.gz" -C "${GAP_INSTALL_DIR}";
+	curl -L https://github.com/gap-packages/singular/releases/download/v2022.09.23/singular-2022.09.23.tar.gz --output "${GAP_INSTALL_DIR}/singular-2022.09.23.tar.gz"; \
+	tar -xvf "${GAP_INSTALL_DIR}/singular-2022.09.23.tar.gz" -C "${GAP_INSTALL_DIR}";
 
-RUN cd /home/sage/sage && wget https://github.com/sagemath/sage/blob/develop/configure.ac; sage -p 4ti2;
+RUN cd /home/sage/sage && wget https://raw.githubusercontent.com/sagemath/sage/develop/configure.ac;
+
+RUN sage -p 4ti2
 
 RUN sage -p nauty
 
@@ -30,3 +32,33 @@ RUN sudo curl https://raw.githubusercontent.com/coneill-math/kunzpolyhedron/mast
 RUN sudo curl https://raw.githubusercontent.com/coneill-math/kunzpolyhedron/master/PlotKunzPoset3D.sage --output "/PlotKunzPoset3D.sage"
 
 
+
+
+# Setting up Macaulay2 repository
+RUN sudo apt-get update && \
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends software-properties-common apt-transport-https && \
+    sudo add-apt-repository ppa:macaulay2/macaulay2 && sudo add-apt-repository ppa:macaulay2/macaulay2 && \
+    sudo apt-get update && sudo apt-get clean
+
+# Install Macaulay2
+RUN sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends macaulay2 && sudo apt-get clean
+
+# Install optional packages
+# RUN sudo DEBIAN_FRONTEND=noninteractive apt-get install -y emacs elpa-macaulay2 bash-completion curl git mlocate && \
+#     sudo apt-get clean && updatedb
+
+# Add non-root user for running Macaulay2
+# RUN useradd -G sudo -g root -u 1000 -m macaulay && echo "macaulay ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+# USER 1000:0
+
+# Setting environment variables
+ENV LD_LIBRARY_PATH "${LD_LIBRARY_PATH}:/usr/lib/Macaulay2/lib"
+ENV PATH "${PATH}:/usr/libexec/Macaulay2/bin"
+
+# WORKDIR /home/macaulay
+# ENTRYPOINT emacs
+
+
+# add M2 to Jupyter
+RUN sage --pip install macaulay2-jupyter-kernel
+RUN sage --python3 -m m2_kernel.install
