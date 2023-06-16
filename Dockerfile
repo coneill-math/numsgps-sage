@@ -62,3 +62,16 @@ ENV PATH "${PATH}:/usr/libexec/Macaulay2/bin"
 # add M2 to Jupyter
 RUN sage --pip install macaulay2-jupyter-kernel
 RUN sage --python3 -m m2_kernel.install
+
+# make horizontal scrolling work
+RUN echo "div.output_subarea pre { white-space: pre }" >> /home/sage/sage/local/var/lib/sage/venv-python3.9.9/lib/python3.9/site-packages/notebook/static/custom/custom.css
+
+# increase M2 timeout (default was 4 seconds, *way* too short)
+RUN curl -L https://raw.githubusercontent.com/coneill-math/macaulay2-jupyter-kernel/master/m2_kernel/kernel.py --output /home/sage/sage/local/var/lib/sage/venv-python3.9.9/lib/python3.9/site-packages/m2_kernel/kernel.py
+
+
+# install RISE for slideshows
+RUN sage --pip install RISE
+
+
+
