@@ -15,13 +15,18 @@ RUN cd /home/sage/sage && wget https://raw.githubusercontent.com/sagemath/sage/d
 
 RUN sage -p 4ti2
 
+RUN sage -p topcom
+
 RUN sage -p nauty
 
 RUN sage -p e_antic
 
 RUN sage -p normaliz
-
 RUN sage -p pynormaliz
+
+# the backend fails to build, seems for a long time now
+# RUN sage -p cbc
+# RUN sage -pip install sage-numerical-backends-coin
 
 RUN sage -c "gap_reset_workspace()"
 

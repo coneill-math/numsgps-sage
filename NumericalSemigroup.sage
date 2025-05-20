@@ -253,7 +253,7 @@ class Quasipolynomial:
 		return max([0] + [i for i in range(len(vals)) if self(i) != vals[i]])
 	
 	@staticmethod
-	def FromCoefficients(vals, per, d, leadingcoeff = None):
+	def FromFunctionVals(vals, per, d, leadingcoeff = None):
 		l = len(vals)
 		if leadingcoeff != None:
 			d = d - 1
@@ -297,7 +297,7 @@ class Quasipolynomial:
 				factcountlist[i] = factcountlist[i] + factcountlist[i-g]
 				i = i + 1
 		
-		ret = Quasipolynomial.FromCoefficients(factcountlist, lcm(gens), len(gens)-1, lcoef)
+		ret = Quasipolynomial.FromFunctionVals(factcountlist, lcm(gens), len(gens)-1, lcoef)
 		ret.gens = gens
 		
 		return ret
@@ -487,6 +487,9 @@ class NumericalSemigroup:
 	def Oversemigroups(self):
 		return [NumericalSemigroup().__InitWithGapSemigroup(s) for s in gap('OverSemigroupsNumericalSemigroup(' + self.semigroup.name() + ')')]
 	
+	def PosetOnElements(self, elements):
+		return Poset(data=(elements, lambda a,b: (b - a) in self))
+	
 	def Factorizations(self, n, dumb = False, should_use_store_loc = True):
 		if not dumb:
 			return self.__GenericGapCall(n, should_use_store_loc, self.__factorizations, 'FactorizationsElementWRTNumericalSemigroup')
@@ -592,7 +595,7 @@ class NumericalSemigroup:
 			gcomm = 'List([1..%d], function(i) if not(i in %s) then return 0; else return Length(FactorizationsElementWRTNumericalSemigroup(i,%s)); fi; end)'
 			factcountlist = [1] + ConvertGapToSage(gap(gcomm % (maxval,snm,snm)))
 			
-			self.__factorizationquasi = Quasipolynomial.FromCoefficients(factcountlist, lcm(self.gens), len(self.gens)-1, lcoef)
+			self.__factorizationquasi = Quasipolynomial.FromFunctionVals(factcountlist, lcm(self.gens), len(self.gens)-1, lcoef)
 		
 		return self.__factorizationquasi
 	
@@ -757,7 +760,7 @@ class NumericalSemigroup:
 			gcomm = 'List([1..%d], function(i) if not(i in %s) then return 0; else return Length(LengthsOfFactorizationsElementWRTNumericalSemigroup(i,%s)); fi; end)'
 			lencountlist = [1] + ConvertGapToSage(gap(gcomm % (maxval,snm,snm)))
 			
-			self.__lensetquasi = Quasipolynomial.FromCoefficients(lencountlist, lcm(self.gens[0], self.gens[-1]), 1)
+			self.__lensetquasi = Quasipolynomial.FromFunctionVals(lencountlist, lcm(self.gens[0], self.gens[-1]), 1)
 		
 		return self.__lensetquasi
 	
@@ -1023,6 +1026,26 @@ class NumericalSemigroup:
 		S = NumericalSemigroup([m] + [coords[i]*m + (i+1) for i in range(len(coords))])
 		
 		return S
+	
+	@staticmethod
+	def AllLengthSetsUpToElement(gens, nmax):
+		lengthsets = {0:[0]}
+		
+		for N in [1 .. nmax]:
+			if N in lengthsets:
+				continue
+			
+			lengthsets[N] = []
+			
+			for g in gens:
+				if N - g < 0:
+					continue
+				
+				lengthsets[N] += [l + 1 for l in lengthsets[N - g]]
+			
+			lengthsets[N] = sorted(set(lengthsets[N]))
+		
+		return lengthsets
 	
 	@staticmethod
 	def SemigroupsWithFrobeniusNumber(f):
