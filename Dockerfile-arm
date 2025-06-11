@@ -57,7 +57,6 @@ RUN   sudo chown -R sage:sage Normaliz && \
 
 
 
-
 RUN GAP_INSTALL_DIR=`sudo find / -name "GAPDoc*" | head -n 1 | xargs dirname`/../..; \
 	\
 	curl -L https://github.com/gap-packages/numericalsgps/releases/download/v1.4.0/NumericalSgps-1.4.0.tar.gz --output "${GAP_INSTALL_DIR}/NumericalSgps.tar.gz"; \
@@ -66,6 +65,7 @@ RUN GAP_INSTALL_DIR=`sudo find / -name "GAPDoc*" | head -n 1 | xargs dirname`/..
 	curl -L https://github.com/gap-packages/singular/releases/download/v2022.09.23/singular-2022.09.23.tar.gz --output "${GAP_INSTALL_DIR}/singular-2022.09.23.tar.gz"; \
 	tar -xvf "${GAP_INSTALL_DIR}/singular-2022.09.23.tar.gz" -C "${GAP_INSTALL_DIR}"; \
 	\
+	sudo apt-get install -y graphviz; \
 	curl -L https://github.com/gap-packages/io/releases/download/v4.9.1/io-4.9.1.tar.gz --output "${GAP_INSTALL_DIR}/io.tar.gz"; \
 	tar -xvf "${GAP_INSTALL_DIR}/io.tar.gz" -C "${GAP_INSTALL_DIR}"; \
 	cd "/home/sage/sage/local/lib/gap/pkg/io-4.9.1" && ./configure && make; \
