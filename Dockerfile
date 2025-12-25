@@ -54,6 +54,9 @@ RUN GAP_INSTALL_DIR=`sudo find / -name "GAPDoc*" | head -n 1 | xargs dirname`/..
 	curl -L https://github.com/gap-packages/singular/releases/download/v2022.09.23/singular-2022.09.23.tar.gz --output "${GAP_INSTALL_DIR}/singular-2022.09.23.tar.gz"; \
 	tar -xvf "${GAP_INSTALL_DIR}/singular-2022.09.23.tar.gz" -C "${GAP_INSTALL_DIR}"; \
 	\
+	curl -L https://github.com/gap-packages/NormalizInterface/releases/download/v1.4.1/NormalizInterface-1.4.1.tar.gz --output "${GAP_INSTALL_DIR}/NormalizInterface-1.4.1.tar.gz"; \
+	tar -xvf "${GAP_INSTALL_DIR}/NormalizInterface-1.4.1.tar.gz" -C "${GAP_INSTALL_DIR}"; \
+	\
 	sudo apt-get install -y graphviz; \
 	curl -L https://github.com/gap-packages/io/releases/download/v4.9.1/io-4.9.1.tar.gz --output "${GAP_INSTALL_DIR}/io.tar.gz"; \
 	tar -xvf "${GAP_INSTALL_DIR}/io.tar.gz" -C "${GAP_INSTALL_DIR}"; \
@@ -81,6 +84,12 @@ RUN GAP_INSTALL_DIR=`sudo find / -name "GAPDoc*" | head -n 1 | xargs dirname`/..
 ENV PATH="${PATH}:/home/sage/sage/local/lib/gap/pkg/JupyterKernel/bin"
 
 RUN sage -c "gap_reset_workspace()"
+
+# set up NormalizInterface by compiling a special Normaliz
+RUN cd "/home/sage/sage/local/lib/gap/pkg/NormalizInterface-1.4.1" && \
+	./prerequisites.sh && \
+	./configure && \
+	make
 
 # add gap to Jupyter
 RUN cd "/home/sage/sage/local/lib/gap/pkg/JupyterKernel-1.5.1" && \
@@ -110,6 +119,9 @@ RUN git clone https://github.com/coneill-math/macaulay2-jupyter-kernel.git && \
 
 # install RISE for slideshows
 RUN sage --pip install RISE
+
+# needed for Vadim to run custom Gosper and WZ functionality
+RUN sage -pip install --no-build-isolation git+https://github.com/mkauers/ore_algebra.git
 
 
 # make horizontal scrolling work
